@@ -8,6 +8,19 @@ First, run the development server:
 bun dev
 ```
 
+Generate the db from the schema:
+
+```bash
+bun run db:generate
+```
+
+Run Drizzle Kit Studio:
+
+```bash
+bun run db:studio
+```
+
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
