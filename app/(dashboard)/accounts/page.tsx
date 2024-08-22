@@ -56,7 +56,7 @@ const AccountsPage = () => {
           <DataTable 
             columns={columns} 
             data={accounts} 
-            filterKey="email" 
+            filterKey="name" 
             onDelete={(rows) => {
               const ids = rows.map((r) => r.original.id)
               deleteAccounts.mutate({ ids })
