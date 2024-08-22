@@ -5,39 +5,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus } from "lucide-react"
 
-import { columns, Payment } from "./columns"
+import { columns } from "./columns"
 //https://ui.shadcn.com/docs/components/data-table
 import { DataTable } from "@/components/data-table"
-
-const data: Payment[] = [
-  {
-    id: "728ed52f",
-    amount: 100,
-    status: "pending",
-    email: "m@example.com",
-  },
-  {
-    id: "728ed52f",
-    amount: 100000,
-    status: "pending",
-    email: "a@example.com",
-  },
-  {
-    id: "728ed52f",
-    amount: 10,
-    status: "success",
-    email: "b@example.com",
-  },
-  {
-    id: "728ed52f",
-    amount: 150,
-    status: "pending",
-    email: "c@example.com",
-  },
-]
+import { useGetAccounts } from "@/features/accounts/api/use-get-accounts"
 
 const AccountsPage = () => {  
   const newAccount = useNewAccount()
+  const accountsQuery = useGetAccounts()
+  const accounts = accountsQuery.data || []
 
   return (
     <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
@@ -53,7 +29,7 @@ const AccountsPage = () => {
         </CardHeader>
         <CardContent>
           
-          <DataTable columns={columns} data={data} filterKey="email" onDelete={() => {}} disabled={false} />
+          <DataTable columns={columns} data={accounts} filterKey="email" onDelete={() => {}} disabled={false} />
         </CardContent>
       </Card>
     </div>

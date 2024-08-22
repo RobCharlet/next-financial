@@ -29,6 +29,7 @@ export const useCreateAccount = () => {
     onSuccess: () => {
       toast.success("Account created")
       // Invalidate the 'accounts' query to refetch and update the data
+      // on success. Data will be automatically updated on account page.
       queryClient.invalidateQueries({ queryKey: ["accounts"] })
     },
     onError: () => {
