@@ -7,7 +7,7 @@ import { InferResponseType } from "hono";
 type ResponseType = InferResponseType<typeof client.api.accounts[":id"]["$delete"]>
 
 // Custom hook for editing an account
-export const useDeleAccount = (id?: string) => {
+export const useDeleteAccount = (id?: string) => {
   // Get the query client instance to manage query cache
   const queryClient = useQueryClient();
 
