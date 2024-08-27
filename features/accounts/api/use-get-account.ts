@@ -3,7 +3,6 @@ import { client } from "@/lib/hono";
 
 
 export const useGetAccount = (id?:string) => {
-  console.log(id)
   const query = useQuery({
     // Request will only be fetch if we have an id
     enabled:!!id,

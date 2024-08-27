@@ -30,7 +30,8 @@ const app = new Hono()
 
       return c.json({data})
     })
-  .get("/:id",
+  .get(
+    "/:id",
     zValidator("param", z.object({
       id: z.string().optional(),
     })),
@@ -41,7 +42,7 @@ const app = new Hono()
       console.log(c)
 
       if (!id) {
-        return c.json({error: "Bad request"}, 400)
+        return c.json({error: "Missing id"}, 400)
       }
 
       if (!auth?.userId) {
@@ -69,7 +70,8 @@ const app = new Hono()
       return c.json({data})
     }
   )
-  .post("/",
+  .post(
+    "/",
     clerkMiddleware(),
     // Get the schema created with createInsertSchema.
     // Only valid the name.
@@ -95,7 +97,8 @@ const app = new Hono()
 
       return c.json({ data })
     })
-  .post("/bulk-delete", 
+  .post(
+    "/bulk-delete", 
     clerkMiddleware(),
     zValidator(
       "json",
@@ -125,6 +128,53 @@ const app = new Hono()
       
         return c.json({data})
     }
+  )
+  .patch(
+    "/:id",
+    clerkMiddleware(),
+    // Validate the id param
+    zValidator("param",
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    // Validate values
+    zValidator("json", insertAccountSchema.pick({
+      name: true
+    })),
+    async (c) => {
+      const auth = getAuth(c)
+      const { id } = c.req.valid("param")
+      const values = c.req.valid("json")
+
+      if (!id) {
+        return c.json({error: "Missing id"}, 400)
+      }
+
+      if (!auth?.userId) {
+        return c.json({error: "Unauthorized"}, 401)
+      }
+
+      const [data] = await db
+        .update(accounts)
+        .set(values)
+        .where(
+          and(
+            eq(accounts.userId, auth.userId),
+            eq(accounts.id, id)
+          )
+        )
+        // set does not automatically return results
+        .returning()
+
+      if (!data) {
+        return c.json({error: "Not found"}, 404)
+      }
+
+      return c.json({ data })
+    }
+
+
   )
 
 
