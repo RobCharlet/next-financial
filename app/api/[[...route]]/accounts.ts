@@ -39,7 +39,6 @@ const app = new Hono()
     async (c) => {
       const auth = getAuth(c)
       const { id } = c.req.valid("param")
-      console.log(c)
 
       if (!id) {
         return c.json({error: "Missing id"}, 400)
@@ -133,13 +132,16 @@ const app = new Hono()
     "/:id",
     clerkMiddleware(),
     // Validate the id param
-    zValidator("param",
+    zValidator(
+      "param",
       z.object({
         id: z.string().optional(),
       })
     ),
     // Validate values
-    zValidator("json", insertAccountSchema.pick({
+    zValidator(
+      "json", 
+      insertAccountSchema.pick({
       name: true
     })),
     async (c) => {
@@ -173,8 +175,6 @@ const app = new Hono()
 
       return c.json({ data })
     }
-
-
   )
 
 
