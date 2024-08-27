@@ -22,9 +22,10 @@ export const useEditAccount = (id?: string) => {
     mutationFn: async (json) => {
       // Make a POST request to the API with the provided JSON data
       const response = await client.api.accounts[":id"]["$patch"]({
-        param: {id},
+        param: {id}, 
         json,
       })
+
       // Return the JSON response from the server
       return await response.json()
     },
