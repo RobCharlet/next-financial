@@ -15,6 +15,13 @@
       "when": 1723713020006,
       "tag": "0001_fancy_big_bertha",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1724769197763,
+      "tag": "0002_bored_bill_hollister",
+      "breakpoints": true
     }
   ]
 }
