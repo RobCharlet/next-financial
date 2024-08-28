@@ -17,9 +17,7 @@ export const useConfirm = (
   const [promise, setPromise] = useState<{resolve: (value: boolean) => void } | null>(null)
 
   const confirm = () => new Promise((resolve, reject) => {
-    console.log("confirm")
      setPromise({resolve})
-     console.log(promise)
   })
 
   const handleClose = () => {
