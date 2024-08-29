@@ -6,7 +6,7 @@
 import { create } from "zustand"
 
 // Define the shape of the state for managing the new account modal/sheet.
-type NewAccountState = {
+type NewTransactionState = {
   isOpen: boolean, // Indicates whether the new account modal is open or closed.
   onOpen: () => void, // Function to open the new account modal.
   onClose: () => void // Function to close the new account modal.
@@ -14,7 +14,7 @@ type NewAccountState = {
 
 // Create a Zustand store to manage the state of the new account modal.
 // https://github.com/pmndrs/zustand
-export const useNewAccount = create<NewAccountState>((set) => ({
+export const useNewTransaction = create<NewTransactionState>((set) => ({
   isOpen: false, // Initialize the modal as closed by default.
   onOpen: () => set({isOpen: true}), // Function to open the modal by setting isOpen to true.
   onClose: () => set({isOpen: false}), // Function to close the modal by setting isOpen to false.
