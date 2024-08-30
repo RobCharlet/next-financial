@@ -83,6 +83,7 @@ export const columns: ColumnDef<ResponseType>[] = [
     cell: ({ row }) => {
       return (
         <CategoryColumn
+        id={row.original.id}
         category={row.original.category}
         categoryId={row.original.categoryId}
       />

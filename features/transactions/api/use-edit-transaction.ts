@@ -1,16 +1,13 @@
 import { toast } from "sonner";
-import { client } from "@/lib/hono";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Define the response type of the API endpoint
-type ResponseType = InferResponseType<typeof client.api.transactions[":id"]["$patch"]>
-// Define the request payload type for the API endpoin
-type RequestType = InferRequestType<typeof client.api.transactions[":id"]["$patch"]>["json"] 
+import { client } from "@/lib/hono";
 
-// Custom hook for editing an transaction
+type ResponseType = InferResponseType<typeof client.api.transactions[":id"]["$patch"]>;
+type RequestType = InferRequestType<typeof client.api.transactions[":id"]["$patch"]>["json"];
+
 export const useEditTransaction = (id?: string) => {
-  // Get the query client instance to manage query cache
   const queryClient = useQueryClient();
 
   const mutation = useMutation<
@@ -18,31 +15,23 @@ export const useEditTransaction = (id?: string) => {
     Error,
     RequestType
   >({
-    // Function that performs the mutation (API request)
     mutationFn: async (json) => {
-      // Make a POST request to the API with the provided JSON data
-      const response = await client.api.transactions[":id"]["$patch"]({
-        param: {id}, 
+      const response = await client.api.transactions[":id"]["$patch"]({ 
+        param: { id },
         json,
-      })
-
-      // Return the JSON response from the server
-      return await response.json()
+      });
+      return await response.json();
     },
-    // Callback function for when the mutation is successful
     onSuccess: () => {
-      toast.success("Transaction updated")
-      // Invalidate 'transaction' query
-      queryClient.invalidateQueries({ queryKey: ["transaction", {id}]})
-      // Invalidate the 'transactions' query to refetch and update the data
-      // on success. Data will be automatically updated on transaction page.
-      queryClient.invalidateQueries({ queryKey: ["transactions"] })
+      toast.success("Transaction updated");
+      queryClient.invalidateQueries({ queryKey: ["transaction", { id }] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
     },
     onError: () => {
-      toast.error("Failed to edit transaction")
-    }
-  })
+      toast.error("Failed to edit transaction");
+    },
+  });
 
-  // Return the mutation object to be used in components
-  return mutation
-}
+  return mutation;
+};

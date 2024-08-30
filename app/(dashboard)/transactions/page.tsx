@@ -56,7 +56,7 @@ const TransactionsPage = () => {
           <DataTable 
             columns={columns} 
             data={transactions} 
-            filterKey="date" 
+            filterKey="payee" 
             onDelete={(rows) => {
               const ids = rows.map((r) => r.original.id)
               deleteTransaction.mutate({ ids })
