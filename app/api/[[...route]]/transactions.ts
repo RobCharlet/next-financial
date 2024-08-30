@@ -254,8 +254,9 @@ const app = new Hono()
         return c.json({error: "Unauthorized"}, 401)
       }
 
-      const transactionsToUpdate = db.$with("transaction_to_update").as(
-        db.select({id: transactions.id}).from(transactions)
+      const transactionsToUpdate = db.$with("transactions_to_update").as(
+        db.select({id: transactions.id})
+        .from(transactions)
         .innerJoin(accounts, eq(transactions.accountId, accounts.id))
         .where(
           and(
@@ -271,7 +272,7 @@ const app = new Hono()
         .update(transactions)
         .set(values)
         .where(
-          inArray(transactions.id, sql`select id from ${transactionsToUpdate}`)
+          inArray(transactions.id, sql`(select id from ${transactionsToUpdate})`)
         )
         // set does not automatically return results
         .returning()
@@ -321,7 +322,7 @@ const app = new Hono()
         .with(transactionsToDelete)
         .delete(transactions)
         .where(
-          inArray(transactions.id, sql`select id from ${transactionsToDelete}`)
+          inArray(transactions.id, sql`(select id from ${transactionsToDelete})`)
         )
         // set does not automatically return results
         .returning({
