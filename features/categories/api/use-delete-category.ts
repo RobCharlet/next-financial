@@ -33,6 +33,8 @@ export const useDeleteCategory = (id?: string) => {
       // Invalidate the 'categories' query to refetch and update the data
       // on success. Data will be automatically updated on category page.
       queryClient.invalidateQueries({ queryKey: ["categories"] })
+      // Category data on transaction pages will be automatically updated
+      queryClient.invalidateQueries({ queryKey: ["transactions"] })
     },
     onError: () => {
       toast.error("Failed to delete category")

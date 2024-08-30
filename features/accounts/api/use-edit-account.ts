@@ -37,6 +37,8 @@ export const useEditAccount = (id?: string) => {
       // Invalidate the 'accounts' query to refetch and update the data
       // on success. Data will be automatically updated on account page.
       queryClient.invalidateQueries({ queryKey: ["accounts"] })
+      // Edited account Data will be automatically updated on transaction pages.
+      queryClient.invalidateQueries({ queryKey: ["transactions"] })
     },
     onError: () => {
       toast.error("Failed to edit account")
