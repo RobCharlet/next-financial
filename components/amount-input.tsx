@@ -1,8 +1,8 @@
 //https://cchanxzy.github.io/react-currency-input-field/
 import CurrencyInput from "react-currency-input-field"
+import { Info, MinusCircle, PlusCircle } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 import { cn } from "@/lib/utils"
-import { Info, MinusCircle, PlusCircle } from "lucide-react"
 
 type Props = {
   value: string,
@@ -27,7 +27,7 @@ export const AmountInput = ({
   const onReverseValue = () => {
     if(!value) return
 
-    const newValue = parsedValue * -1
+    const newValue = parseFloat(value) * -1
     onChange(newValue.toString())
   }
 

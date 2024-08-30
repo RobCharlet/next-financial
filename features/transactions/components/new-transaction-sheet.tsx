@@ -45,7 +45,16 @@ export const NewTransactionSheet = () => {
     label: category.name,
     value: category.id
   }))
-
+  
+  const isPending = 
+  createMutation.isPending ||
+  categoryMutation.isPending ||
+  accountMutation.isPending
+  
+  const isLoading = 
+  categoryQuery.isLoading ||
+  accountQuery.isLoading
+  
   const onSubmit = (values: FormValues) => {
     createMutation.mutate(values, {
       onSuccess: () => {
@@ -53,16 +62,7 @@ export const NewTransactionSheet = () => {
       }
     })
   }
-
-  const isPending = 
-    createMutation.isPending ||
-    categoryMutation.isPending ||
-    accountMutation.isPending
-
-  const isLoading = 
-    categoryQuery.isLoading ||
-    accountQuery.isLoading
-
+  
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="space-y-4">
