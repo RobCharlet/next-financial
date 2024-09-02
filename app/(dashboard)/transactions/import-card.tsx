@@ -32,11 +32,34 @@ export const ImportCard = ({
   onCancel,
   onSubmit
 }: Props) => {
-  const [selectedColumns, setSeletedColumns] = useState<SelectedColumnsState>({})
+  
+  const [selectedColumns, setSelectedColumns] = useState<SelectedColumnsState>({})
 
   // First react-papaparse data result line is the csv columns titles
   const headers = data[0]
   const body = data.slice(1)
+
+  const onTableHeadSelectChange = (
+    columnIndex: number,
+    value: string | null
+  ) => {
+    setSelectedColumns((prev) => {
+      const newSelectedColumns = {...prev}
+
+      for (const key in newSelectedColumns) {
+        if (newSelectedColumns[key] === value) {
+          newSelectedColumns[key] = null
+        }
+      }  
+
+      if (value === "skip") {
+        value = null
+      }
+
+      newSelectedColumns[`column_${columnIndex}`] = value
+      return newSelectedColumns 
+    })
+  }
 
   return (
     <div>
@@ -56,7 +79,7 @@ export const ImportCard = ({
             headers={headers}
             body={body}
             selectedColumns={selectedColumns}
-            onTableHeadSelectChange={() => {}}
+            onTableHeadSelectChange={onTableHeadSelectChange}
           />
         </CardContent>
       </Card>
