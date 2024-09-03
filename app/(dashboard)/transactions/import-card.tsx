@@ -1,3 +1,6 @@
+// TODO:
+// Personalize errors when selecting the wrong option (e.g. date for a string)
+// Prevent duplicates
 import { Button } from "@/components/ui/button"
 import { 
   Card, 
@@ -134,7 +137,7 @@ export const ImportCard = ({
       date: format(parse(item.date, dateFormat, new Date()), outputFormat)
     }))
 
-    console.log({formattedData})
+    onSubmit(formattedData)
   }
 
   return (
