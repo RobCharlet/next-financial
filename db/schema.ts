@@ -33,7 +33,7 @@ export const categories = pgTable("categories", {
 //https://orm.drizzle.team/docs/rqb#one-to-many
 export const categoriesRelations = relations(categories, ({ many }) => ({
   // A category could have many transactions
-  categories: many(categories)
+  transactions: many(transactions)
 }))
 
 export const insertCategorySchema = createInsertSchema(categories)
