@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge"
 import { type ClassValue, clsx } from "clsx"
-import { eachDayOfInterval, isSameDay } from "date-fns"
+import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -95,4 +95,52 @@ export function fillMissingDays(
 
   // Return the array of days with all missing days filled in
   return transactionsByDay
+}
+
+type Period = {
+  from: string | Date | undefined,
+  to: string | Date | undefined,
+}
+
+// Function to format a date range into a human-readable string.
+export function formatDateRange (period?: Period) {
+  const defaultTo = new Date()
+  const defaultFrom = subDays(defaultTo, 30)
+
+  // If the "from" date is not provided in the period, use the default range (last 30 days)
+  if (!period?.from) {
+    return `${format(defaultFrom, "LLL dd")} - ${format(defaultTo, "LLL dd, y")}`
+  }
+
+  // If both "from" and "to" dates are provided, format and return the date range string.
+  if (period.to) {
+    return `${format(period.from, "LLL dd")} - ${format(period.to, "LLL dd, y")}`
+  }
+
+  // If only the "from" date is provided (and no "to" date), return just the "from" date.
+  // Example output: "Jul 01"
+  return format(period.from, "LLL dd")
+}
+
+// This function formats a numeric value as a percentage, 
+// with an optional prefix "+" if the value is positive.
+export function formatPercentage(
+  value: number,
+  options: { addPrefix?: boolean } = {
+    addPrefix: false
+  },
+) {
+  // Format the value as a percentage using the Intl.NumberFormat API.
+  // The division by 100 is necessary because Intl.NumberFormat expects 
+  // a fractional value (e.g., 0.25 for 25%).
+  const result = new Intl.NumberFormat("en-US", {
+    style: "percent",
+  }).format(value / 100)
+
+  // Add a "+" prefix to the formatted result.
+  if (options.addPrefix && value > 0) {
+    return `+${result}`
+  }
+
+  return result
 }
