@@ -176,9 +176,10 @@ const app = new Hono()
           // Sum of income (positive amounts)
           income: sql`SUM(CASE WHEN ${transactions.amount} >= 0 
             THEN ${transactions.amount} ELSE 0 END)`.mapWith(Number),
-          // Sum of expenses (negative amounts)
+          // Sum of expenses (negative amounts converted on absolute so the chart
+          // be positive) 
           expenses: sql`SUM(CASE WHEN ${transactions.amount} < 0 
-          THEN ${transactions.amount} ELSE 0 END)`.mapWith(Number)
+          THEN ABS(${transactions.amount}) ELSE 0 END)`.mapWith(Number)
         })
         .from(transactions)
         // Join on accountId
