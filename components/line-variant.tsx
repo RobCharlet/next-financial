@@ -19,7 +19,7 @@ type Props = {
 
 export const LineVariant = ({data} : Props) => {
   return (
-    //https://recharts.org/en-US/examples/SimpleLineChart
+    //https://recharts.org/en-US/examples/SimpleBarChart
     <ResponsiveContainer width="100%" height={350}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
