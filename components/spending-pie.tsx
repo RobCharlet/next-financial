@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { FileSearch, PieChartIcon, Radar, Target } from "lucide-react"
+import { FileSearch, Loader2, PieChartIcon, Radar, Target } from "lucide-react"
 import { 
   Card, 
   CardContent, 
@@ -14,9 +14,10 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 import { PieVariant } from "@/components/pie-variant"
 import { RadarVariant } from "@/components/radar-variant"
-import { RadialVariant } from "./radial-variant"
+import { RadialVariant } from "@/components/radial-variant"
 
 
 type Props = {
@@ -98,3 +99,19 @@ export const SpendingPie = ({ data = [] }: Props) => {
     </Card>
   )
 } 
+
+export const SpendingPieLoading = () => {
+  return (
+    <Card className="border-none drop-shadow-sm">
+      <CardHeader className="flex flex-row items-center justify-between space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-8 lg:w-[120px] w-full" />
+      </CardHeader>
+      <CardContent>
+        <div className="h-[350px] w-full flex items-center justify-center">
+          <Loader2 className="h-6 w-6 text-slate-300 animate-spin" />
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
