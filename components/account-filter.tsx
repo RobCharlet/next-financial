@@ -16,7 +16,7 @@ import {
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from "./ui/select"
+} from "@/components/ui/select"
 
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts"
 import { useGetSummary } from "@/features/summary/api/use-get-summary"

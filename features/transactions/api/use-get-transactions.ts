@@ -1,43 +1,48 @@
-import { useQuery } from "@tanstack/react-query";
-import { client } from "@/lib/hono";
-import { useSearchParams } from "next/navigation";
-import { convertAmountFromMiliunits } from "@/lib/utils";
-
+import { useQuery } from "@tanstack/react-query"; // Importing useQuery hook from react-query for data fetching.
+import { client } from "@/lib/hono"; // Importing a pre-configured client to make API calls.
+import { useSearchParams } from "next/navigation"; // Importing a hook to access URL search parameters in a Next.js app.
+import { convertAmountFromMiliunits } from "@/lib/utils"; // Importing a utility function to convert amounts from milliunits to regular units.
 
 export const useGetTransactions = () => {
-  const params = useSearchParams()
-  const from = params.get("from")||""
-  const to = params.get("to")||""
-  const accountId = params.get("accountId")||""
+  const params = useSearchParams(); // Hook to retrieve search parameters from the URL.
+  
+  // Retrieve specific search parameters (from, to, and accountId) from the URL.
+  const from = params.get("from") || ""; // If "from" param doesn't exist, set an empty string as default.
+  const to = params.get("to") || ""; // If "to" param doesn't exist, set an empty string as default.
+  const accountId = params.get("accountId") || ""; // If "accountId" param doesn't exist, set an empty string as default.
 
+  // Using the `useQuery` hook to fetch transactions based on the queryKey (combination of query params).
   const query = useQuery({
-    queryKey: ["transactions", {from, to, accountId}],  
+    // The `queryKey` uniquely identifies the query and can be used for caching or refetching.
+    queryKey: ["transactions", { from, to, accountId }],
+    
+    // The `queryFn` is the function that will be executed to fetch the data.
     queryFn: async () => {
-      // Thanks to @/lib/hono.ts, the client knows the available routes
-      // And their data types.
+      // Fetch the transactions from the API using the client (configured with known routes and types from hono.ts).
       const response = await client.api.transactions.$get({
         query: {
-          from,
-          to,
-          accountId
+          from, // The `from` date parameter for filtering transactions.
+          to, // The `to` date parameter for filtering transactions.
+          accountId, // The account ID to filter transactions for a specific account.
         }
       });
 
-      // We have to handle errors manulally unlike Axios.
+      // Check if the response is successful. If not, throw an error to be caught by react-query.
       if (!response.ok) {
-        throw new Error("Failed to fetch accounts")
+        throw new Error("Failed to fetch accounts"); // Error handling if the request fails.
       }
 
-      const { data } = await response.json()
+      // Parse the response data from JSON format.
+      const { data } = await response.json();
       
-      // Convert directly to normal units
-      return data.map((transaction) =>({
-          ...transaction,
-          amount: convertAmountFromMiliunits(transaction.amount)
-        })
-      )
-    }
-  })
+      // Map over the transactions and convert their amounts from milliunits to regular units using the utility function.
+      return data.map((transaction) => ({
+        ...transaction, // Spread the original transaction properties.
+        amount: convertAmountFromMiliunits(transaction.amount), // Convert the amount field from milliunits.
+      }));
+    },
+  });
 
-  return query
+  // Return the result of the query, which includes data, loading state, and error information.
+  return query;
 }
