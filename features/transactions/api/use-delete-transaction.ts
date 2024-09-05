@@ -33,6 +33,7 @@ export const useDeleteTransaction = (id?: string) => {
       // Invalidate the 'transactions' query to refetch and update the data
       // on success. Data will be automatically updated on transaction page.
       queryClient.invalidateQueries({ queryKey: ["transactions"] })
+      queryClient.invalidateQueries({ queryKey: ["summary"] })
     },
     onError: () => {
       toast.error("Failed to delete transaction")

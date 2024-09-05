@@ -31,6 +31,7 @@ export const useBulkDeleteAccounts = () => {
       // Invalidate the 'accounts' query to refetch and update the data
       // on success. Data will be automatically updated on account page.
       queryClient.invalidateQueries({ queryKey: ["accounts"] })
+      queryClient.invalidateQueries({ queryKey: ["summary"] })
     },
     onError: () => {
       toast.error("Failed to delete accounts")
