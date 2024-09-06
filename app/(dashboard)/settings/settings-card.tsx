@@ -1,8 +1,9 @@
 "use client"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+
 import { cn } from "@/lib/utils"
+import { PlaidConnect } from "@/features/plaid/components/plaid-connect"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
 export const SettingsCard = () => {
   const connectedBank = null
@@ -30,9 +31,7 @@ export const SettingsCard = () => {
                 : "No bank account connected"
               }
             </div>
-            <Button size="sm" variant="ghost">
-              Connect
-            </Button>
+            <PlaidConnect />
           </div>
         </div>
       </CardContent>
