@@ -1,4 +1,5 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth"
+import { zValidator } from "@hono/zod-validator"
 import { Hono } from "hono"
 import { 
   Configuration, 
@@ -7,6 +8,7 @@ import {
   PlaidEnvironments,
   Products
 } from "plaid"
+import { z } from "zod"
 
 const configuration = new Configuration({
   // Axios configuration
@@ -24,6 +26,7 @@ const client = new PlaidApi(configuration)
 const app = new Hono()
   .post(
     // https://plaid.com/docs/quickstart/#how-it-works
+
     "/create-link-token",
     clerkMiddleware(),
     async (c) => {
@@ -47,6 +50,31 @@ const app = new Hono()
       })
 
       return c.json({ data: token.data.link_token }, 200)
+    },
+  )
+  .post(
+    // https://plaid.com/docs/quickstart/#how-it-works
+    "/exchange-public-token",
+    clerkMiddleware(),
+    zValidator(
+      "json",
+      z.object({
+        publicToken: z.string()
+      })
+    ),
+    async (c) => {
+      const auth = getAuth(c)
+      const { publicToken } = c.req.valid("json")
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401)
+      }
+      
+      const exchange = await client.itemPublicTokenExchange({
+        public_token: publicToken
+      })
+
+      return c.json({ data: exchange.data.access_token }, 200)
     },
   )
 

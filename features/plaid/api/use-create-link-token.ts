@@ -13,9 +13,9 @@ export const useCreateLinkToken = () => {
     Error
   >({
     // Function that performs the mutation (API request)
-    mutationFn: async (json) => {
+    mutationFn: async () => {
       // Make a POST request to the API with the provided JSON data
-      const response = await client.api.plaid["create-link-token"].$post({json})
+      const response = await client.api.plaid["create-link-token"].$post()
 
       if (!response.ok) {
         throw Error("Failed to create link token")
