@@ -1,6 +1,8 @@
-import { clerkMiddleware, getAuth } from "@hono/clerk-auth"
-import { zValidator } from "@hono/zod-validator"
+import { z } from "zod"
 import { Hono } from "hono"
+import { zValidator } from "@hono/zod-validator"
+import { clerkMiddleware, getAuth } from "@hono/clerk-auth"
+import { db } from "@/db/drizzle"
 import { 
   Configuration, 
   CountryCode, 
@@ -8,7 +10,8 @@ import {
   PlaidEnvironments,
   Products
 } from "plaid"
-import { z } from "zod"
+import { connectedBanks } from "@/db/schema"
+import { createId } from "@paralleldrive/cuid2"
 
 const configuration = new Configuration({
   // Axios configuration
@@ -73,6 +76,15 @@ const app = new Hono()
       const exchange = await client.itemPublicTokenExchange({
         public_token: publicToken
       })
+
+      const [connected] = await db
+        .insert(connectedBanks)
+        .values({
+          id: createId(),
+          userId: auth.userId,
+          accessToken: publicToken
+        })
+        .returning()
 
       return c.json({ data: exchange.data.access_token }, 200)
     },
