@@ -1,28 +1,26 @@
 import { toast } from "sonner";
 import { client } from "@/lib/hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
+import { InferResponseType } from "hono";
 
 // Define the response type of the API endpoint
-type ResponseType = InferResponseType<typeof client.api.plaid["exchange-public-token"]["$post"], 200>
-type requestType = InferRequestType<typeof client.api.plaid["exchange-public-token"]["$post"]>["json"]
+type ResponseType = InferResponseType<typeof client.api.plaid["connected-bank"]["$delete"], 200>
 
 // Custom hook for creating an category
-export const useExchangePublicToken = () => {
+export const useDeleteConnectedBank = () => {
   const queryClient = useQueryClient()
-  
+
   const mutation = useMutation<
     ResponseType,
-    Error,
-    requestType
+    Error
   >({
     // Function that performs the mutation (API request)
-    mutationFn: async (json) => {
+    mutationFn: async () => {
       // Make a POST request to the API with the provided JSON data
-      const response = await client.api.plaid["exchange-public-token"].$post({json})
+      const response = await client.api.plaid["connected-bank"].$delete()
 
       if (!response.ok) {
-        throw Error("Failed to exchange public token")
+        throw Error("Failed to delete connected bank")
       }
 
       // Return the JSON response from the server
@@ -30,7 +28,7 @@ export const useExchangePublicToken = () => {
     },
     // Callback function for when the mutation is successful
     onSuccess: () => {
-      toast.success("Public token exchanged")
+      toast.success("Delete connected bank")
       // Reinvalidate the following
       queryClient.invalidateQueries({queryKey: ["connected-bank"]})
       queryClient.invalidateQueries({queryKey: ["summary"]})
@@ -39,7 +37,7 @@ export const useExchangePublicToken = () => {
       queryClient.invalidateQueries({queryKey: ["categories"]})
     },
     onError: () => {
-      toast.error("Failed to exchange public token")
+      toast.error("Failed to delete connected bank")
     }
   })
 
