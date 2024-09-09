@@ -1,12 +1,16 @@
+//https://nodejs.org/api/crypto.html#crypto
+import crypto from"crypto"
 import { Hono } from "hono"
-
+import { eq } from "drizzle-orm"
 import { db } from "@/db/drizzle"
+import { setupLemon } from "@/lib/ls"
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth"
+import { createCheckout, getSubscription } from "@lemonsqueezy/lemonsqueezy.js"
+import { createId } from "@paralleldrive/cuid2"
 
 import { subscriptions } from "@/db/schema"
-import { createCheckout, getSubscription } from "@lemonsqueezy/lemonsqueezy.js"
-import { eq } from "drizzle-orm"
-import { setupLemon } from "@/lib/ls"
+import { auth } from "@clerk/nextjs/server"
+
 
 setupLemon()
 
@@ -86,6 +90,84 @@ const app = new Hono()
       }
 
       return c.json({data: checkoutUrl})
+    }
+  )
+  .post(
+    "/webhook",
+    async (c) =>  {
+      
+      // Payload
+      const text = await c.req.text()
+
+      console.log(text)
+      
+      //https://docs.lemonsqueezy.com/help/webhooks#signing-requests
+      const hmac = crypto.createHmac(
+        "sha256",
+        process.env.LEMONSQUEEZY_WEBHOOK_SECRET!
+      )
+      const digest = Buffer.from(
+        hmac.update(text).digest("hex"),
+        "utf8"
+      )
+      const signature = Buffer.from(
+        c.req.header('X-Signature') as string,
+         'utf8'
+      )
+
+      if (!crypto.timingSafeEqual(digest, signature)) {
+        return c.json({error: "Unauthorized"}, 401)
+      }
+
+      //https://docs.lemonsqueezy.com/help/webhooks#webhook-requests
+      const payload = JSON.parse(text)
+
+      console.log({payload})
+
+      const event = payload.meta.event_name
+
+      const subscriptionId= payload.data.id
+      const userId = payload.meta.custom_data.user_id
+      const status = payload.data.attributes.status
+
+      const [existing] = await db
+        .select()
+        .from(subscriptions)
+        .where(
+          eq(
+            subscriptions.id, subscriptionId
+          )
+        )
+
+      // If a subscription_created event fails the first time, lemonsqueezy will
+      // resend a subscription_updated and not a create, so we to merge the two events
+      if (event === "subscription_created" || "subscription_updated") {
+        // Update
+        if (existing) {
+          await db
+          .update(subscriptions)
+          .set({
+            status
+          })
+          .where(
+            eq(subscriptions.id, subscriptionId)
+          )
+        }
+
+        //create
+        await db
+          .insert(subscriptions)
+          .values({
+            id: createId(),
+            subscriptionId,
+            userId,
+            status
+          }
+        )
+      }
+
+      // We must return a success to the webhook
+      return c.json({}, 200)
     }
   )
 
