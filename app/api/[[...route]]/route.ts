@@ -5,6 +5,7 @@ import categories from './categories'
 import transactions from './transactions'
 import summary from './summary'
 import plaid from './plaid'
+import subscriptions from './subscriptions'
 
 // Fix Axios request/responses
 // Cannot use edge cause Plaid use Axios
@@ -20,6 +21,7 @@ const routes = app
   .route("/plaid", plaid)
   .route("/summary", summary)
   .route("/transactions", transactions)
+  .route("/subscriptions", subscriptions)
 
 export const GET = handle(app)
 export const POST = handle(app)
