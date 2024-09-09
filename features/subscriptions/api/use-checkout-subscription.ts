@@ -25,6 +25,7 @@ export const useCheckoutSubscription = () => {
       return await response.json()
     },
     onSuccess: ({data}) => {
+      // Redirect to the portal URL
       window.location.href = data
     },
     onError: () => {

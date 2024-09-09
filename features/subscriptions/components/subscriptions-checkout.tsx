@@ -1,22 +1,26 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { useCheckoutSubscription } from "../api/use-checkout-subscription"
+import { useCheckoutSubscription } from "@/features/subscriptions/api/use-checkout-subscription"
+import { useGetSubscription } from "@/features/subscriptions/api/use-get-subscription"
 
 
 export const SubscriptionCheckout = () => {
   
   const checkout = useCheckoutSubscription()
+  const {
+    data: subscription, 
+    isLoading: isLoadingSubscription 
+  } = useGetSubscription()
 
   return (
     <Button 
       size="sm" 
       variant="ghost"
       onClick={()=>{checkout.mutate()}}
-      // Disabled until getting a Plaid token
-      disabled={checkout.isPending}
+      disabled={checkout.isPending || isLoadingSubscription}
       >
-      Upgrade
+      {subscription ? "Manage" : "Upgrade"}
     </Button>
   )
 }
