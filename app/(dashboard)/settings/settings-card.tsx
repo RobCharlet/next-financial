@@ -1,13 +1,20 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { PlaidConnect } from "@/features/plaid/components/plaid-connect"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { useGetConnectedBank } from "@/features/plaid/api/use-get-connected-bank"
+import { PlaidConnect } from "@/features/plaid/components/plaid-connect"
+import { PlaidDisconnect } from "@/features/plaid/components/plaid-disconnect"
 
 export const SettingsCard = () => {
-  const connectedBank = null
+  const {
+    data: connectedBank, 
+    isLoading: isLoadingConnectedBank
+  } = useGetConnectedBank()
 
+  // TODO: implements Plaid webhook to sync Plaid events updates
+  // https://plaid.com/docs/api/products/transfer/reading-transfers/#transfer_events_update
   return (
     <Card className="border-none drop-shadow-sm">
       <CardHeader>
@@ -31,7 +38,10 @@ export const SettingsCard = () => {
                 : "No bank account connected"
               }
             </div>
-            <PlaidConnect />
+            {connectedBank
+              ? <PlaidDisconnect /> 
+              : <PlaidConnect />
+            }
           </div>
         </div>
       </CardContent>
