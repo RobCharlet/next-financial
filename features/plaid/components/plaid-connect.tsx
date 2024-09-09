@@ -20,7 +20,6 @@ export const PlaidConnect = () => {
   useMount(() => {
     createLinkToken.mutate(undefined, {
       onSuccess: ({ data }) => {
-        console.log(data, "TOKEN")
         setToken(data)
       }
     })
