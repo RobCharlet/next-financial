@@ -24,7 +24,9 @@ export const useCheckoutSubscription = () => {
       // Return the JSON response from the server
       return await response.json()
     },
-    // No success cause we redirect after
+    onSuccess: ({data}) => {
+      window.location.href = data
+    },
     onError: () => {
       toast.error("Failed to create URL")
     }
