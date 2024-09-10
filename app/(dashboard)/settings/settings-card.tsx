@@ -51,7 +51,7 @@ export const SettingsCard = () => {
       </CardHeader>
       <CardContent>
         <Separator />
-        <div className="flex flex-col gap-y-2 lg:flew-row items-center py-4">
+        <div className="flex flex-col gap-y-2 lg:flex-row items-center py-4">
           <p className="text-sm font-medium w-full lg:w-[16.5rem]">
             Bank account
           </p>
@@ -72,7 +72,7 @@ export const SettingsCard = () => {
           </div>
         </div>
         <Separator />
-        <div className="flex flex-col gap-y-2 lg:flew-row items-center py-4">
+        <div className="flex flex-col gap-y-2 lg:flex-row items-center py-4">
           <p className="text-sm font-medium w-full lg:w-[16.5rem]">
             Subscription
           </p>
