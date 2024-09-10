@@ -9,7 +9,6 @@ import { createCheckout, getSubscription } from "@lemonsqueezy/lemonsqueezy.js"
 import { createId } from "@paralleldrive/cuid2"
 
 import { subscriptions } from "@/db/schema"
-import { auth } from "@clerk/nextjs/server"
 
 
 setupLemon()
@@ -127,8 +126,6 @@ const app = new Hono()
       //https://docs.lemonsqueezy.com/help/webhooks#webhook-requests
       const payload = JSON.parse(text)
 
-      console.log({payload})
-
       const event = payload.meta.event_name
 
       const subscriptionId= payload.data.id
@@ -140,7 +137,7 @@ const app = new Hono()
         .from(subscriptions)
         .where(
           eq(
-            subscriptions.id, subscriptionId
+            subscriptions.subscriptionId, subscriptionId
           )
         )
 
@@ -155,26 +152,25 @@ const app = new Hono()
             status
           })
           .where(
-            eq(subscriptions.id, subscriptionId)
+            eq(subscriptions.subscriptionId, subscriptionId)
+          )
+        } else {
+          //create
+          await db
+            .insert(subscriptions)
+            .values({
+              id: createId(),
+              subscriptionId,
+              userId,
+              status
+            }
           )
         }
-
-        //create
-        await db
-          .insert(subscriptions)
-          .values({
-            id: createId(),
-            subscriptionId,
-            userId,
-            status
-          }
-        )
       }
 
       // Respond with a success status to acknowledge the webhook
       return c.json({}, 200)
     }
   )
-
 
 export default app
