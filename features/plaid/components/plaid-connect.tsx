@@ -6,6 +6,7 @@ import { usePlaidLink } from "react-plaid-link"
 
 import { useCreateLinkToken } from "@/features/plaid/api/use-create-link-token"
 import { useExchangePublicToken } from "@/features/plaid/api/use-exchange-public-token"
+import { usePaywall } from "@/features/subscriptions/hooks/use-paywall"
 
 import { Button } from "@/components/ui/button"
 
@@ -16,6 +17,11 @@ export const PlaidConnect = () => {
   //https://plaid.com/docs/quickstart/#how-it-works
   const createLinkToken = useCreateLinkToken()
   const exchangePublicToken = useExchangePublicToken()
+  const {
+    shouldBlock,
+    isLoading: isLoadingPaywall,
+    triggerPaywall
+  } = usePaywall()
 
   useMount(() => {
     createLinkToken.mutate(undefined, {
@@ -39,6 +45,11 @@ export const PlaidConnect = () => {
 
   // Open Plaid connection modal 
   const onClick = () => {
+    if (shouldBlock) {
+      triggerPaywall()
+      return
+    } 
+
     plaid.open()
   }
 
@@ -52,7 +63,7 @@ export const PlaidConnect = () => {
       variant="ghost"
       onClick={onClick}
       // Disabled until getting a Plaid token
-      disabled={isDisabled}
+      disabled={isDisabled || isLoadingPaywall}
       >
       Connect
     </Button>
